@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -14,6 +15,7 @@ type Soup struct {
 	Origin      string        `bson:"origin"`
 	Spicy       bool          `bson:"spicy"`
 	Ingredients []string      `bson:"ingredients"`
+	TimeStamp   time.Time     `bson:"timeStamp"`
 }
 
 func main() {
@@ -35,6 +37,7 @@ func main() {
 		Origin:      "Colombia",
 		Spicy:       false,
 		Ingredients: []string{"beef", "pork", "chicken", "vegetables", "starchy roots"},
+		TimeStamp:   time.Now(),
 	}
 
 	//CREATE a second soup,
@@ -44,6 +47,7 @@ func main() {
 		Origin:      "USA",
 		Spicy:       false,
 		Ingredients: []string{"shrimp", "crab stock", "andouille sausage"},
+		TimeStamp:   time.Now(),
 	}
 	//INSERT soups
 	if err := c.Insert(soup1, soup2); err != nil {
@@ -51,13 +55,13 @@ func main() {
 	}
 
 	//FIND one by name
-	queryResult := Soup{}
-	c.Find(bson.M{"name": "ajiaco"}).One(&queryResult)
-	fmt.Println(queryResult)
+	queryResultByName := Soup{}
+	c.Find(bson.M{"name": "ajiaco"}).One(&queryResultByName)
+	fmt.Println(queryResultByName)
 
 	//FIND by ID
-	//	queryResult := Soup{}
-	//	c.Find(bson.M{"_id": bson.ObjectIdHex("IDHERE")}).One(&queryResult)
+	//	queryResultByID := Soup{}
+	//	c.Find(bson.M{"_id": bson.ObjectIdHex("IDHERE")}).One(&queryResultByID)
 
 	//UPDATE
 	//	if err := c.Update(bson.M{"name": "ajiaco"}, bson.M{"spicy": true}); err != nil {
@@ -69,9 +73,13 @@ func main() {
 	}
 
 	//DELETE
-	err = c.Remove(bson.M{"name": "gumbo"})
-	if err != nil {
-		fmt.Println("error removing document")
-	}
+	//	err = c.Remove(bson.M{"name": "gumbo"})
+	//	if err != nil {
+	//		fmt.Println("error removing document")
+	//	}
+
+	//COUNT
+	num, err := c.Find(nil).Count()
+	fmt.Println(num)
 
 }
